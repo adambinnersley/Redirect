@@ -1,0 +1,29 @@
+{
+    "name": "adamb/redirect404",
+    "description": "Redirect specify 404 requests to alternate urls",
+    "type": "library",
+    "require": {
+        "adamb/database": "^1.4",
+        "monolog/monolog": "^1.23"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^7.0"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Adam Binnersley",
+            "email": "abinnersley@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "URIRequest\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "URIRequest\\Tests\\": "tests/"
+        }
+    }
+}
