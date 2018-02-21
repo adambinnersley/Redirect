@@ -36,7 +36,7 @@ class RedirectsTest extends TestCase{
      */
     public function testChangeTableName() {
         $this->assertEquals('redirects', $this->redirect->getRedirectTable());
-        $this->redirect->setRedirectTable(false);
+        $this->assertObjectHasAttribute('log_location', $this->redirect->setRedirectTable(false));
         $this->assertEquals('redirects', $this->redirect->getRedirectTable());
         $this->redirect->setRedirectTable(145);
         $this->assertEquals('redirects', $this->redirect->getRedirectTable());
@@ -52,7 +52,9 @@ class RedirectsTest extends TestCase{
      * @covers \URIRequest\Redirect::getLogLocation
      */
     public function testChangeLogLocation() {
-        $this->markTestIncomplete();
+        $this->assertFalse($this->redirect->getLogLocation());
+        $this->assertObjectHasAttribute('log_location', $this->redirect->setLogLocation(dirname(dirname(__FILE__)).'/logs/redirect_request_errors.txt'));
+        $this->assertNotFalse($this->redirect->getLogLocation());
     }
     
     /**
