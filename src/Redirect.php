@@ -22,7 +22,7 @@ class Redirect {
      * This should be the log location including filename
      * @var string
      */
-    protected $log_location;
+    public $log_location;
 
     /**
      * Constructor
