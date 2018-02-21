@@ -84,8 +84,11 @@ class Redirect {
     public function checkURI($uri, $log = true) {
         $check_db = $this->checkDBRedirects($uri);
         $file_check = false;
+        
         if($check_db !== false) {return $check_db;}
         elseif($file_check !== false) {return $file_check;}
+        
+        if($log === true){$this->logRequest($uri);}
         return false;
     }
     
@@ -94,10 +97,11 @@ class Redirect {
      * @param string $uri This should be the requested URI
      */
     private function logRequest($uri) {
-        $log = new Logger('requests');
-        $log->pushHandler(new StreamHandler($this->getLogLocation(), Logger::DEBUG));
-        
-        $log->addDebug($uri);
+        if($this->getLogLocation() !== false){
+            $log = new Logger('requests');
+            $log->pushHandler(new StreamHandler($this->getLogLocation(), Logger::DEBUG));
+            $log->addDebug($uri);
+        }
     }
 
     /**
@@ -149,12 +153,12 @@ class Redirect {
      */
     public function updateRedirect($uri, $new_uri, $redirect, $active = 1) {
         if($new_uri !== $redirect && !empty(SafeURI::makeURLSafe($uri)) && !empty(SafeURI::makeURLSafe($new_uri)) && !empty(SafeURI::makeURLSafe($redirect))) {
-//            $checkRedirect = $this->checkURI($redirect);
-//            if($checkRedirect !== false && $this->checkURI($redirect) !== SafeURI::makeURLSafe($uri)){
-//                $redirect = $checkRedirect;
-//            }
+            $checkRedirect = $this->checkURI($redirect);
+            if($checkRedirect !== false && $this->checkURI($redirect) !== SafeURI::makeURLSafe($uri)){
+                $redirect = $checkRedirect;
+            }
             if($this->db->update($this->getRedirectTable(), array('uri' => SafeURI::makeURLSafe($new_uri), 'redirect' => SafeURI::makeURLSafe($redirect), 'active' => intval($active)), array('uri' => SafeURI::makeURLSafe($uri)), 1) !== false) {
-                //$this->updateExistingRedirects($uri, $redirect);
+                $this->updateExistingRedirects($uri, $redirect);
                 return true;
             }
         }
