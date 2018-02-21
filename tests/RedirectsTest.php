@@ -61,6 +61,7 @@ class RedirectsTest extends TestCase{
      * @covers \URIRequest\Redirect::__construct
      * @covers \URIRequest\Redirect::addRedirect
      * @covers \URIRequest\Redirect::checkURI
+     * @covers \URIRequest\SafeURI::makeURLSafe
      */
     public function testAddRedirect() {
         // Test successfully adding
@@ -76,6 +77,7 @@ class RedirectsTest extends TestCase{
      * @covers \URIRequest\Redirect::updateRedirect
      * @covers \URIRequest\Redirect::checkURI
      * @covers \URIRequest\Redirect::logRequest
+     * @covers \URIRequest\SafeURI::makeURLSafe
      */
     public function testUpdateRedirect() {
         // Test successfully updating
@@ -94,6 +96,7 @@ class RedirectsTest extends TestCase{
      * @covers \URIRequest\Redirect::deleteRedirect
      * @covers \URIRequest\Redirect::checkURI
      * @covers \URIRequest\Redirect::logRequest
+     * @covers \URIRequest\SafeURI::makeURLSafe
      */
     public function testDeleteRedirect() {
         // Test successfull delete
@@ -108,6 +111,7 @@ class RedirectsTest extends TestCase{
      * @covers \URIRequest\Redirect::__construct
      * @covers \URIRequest\Redirect::checkURI
      * @covers \URIRequest\Redirect::logRequest
+     * @covers \URIRequest\SafeURI::makeURLSafe
      */
     public function testCheckURIs() {
         $this->assertFalse($this->redirect->checkURI('/this-does-not-exist'));
