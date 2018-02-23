@@ -26,5 +26,7 @@
         <var name="username" value="root" />
         <var name="password" value="" />
         <var name="database" value="redirects" />
+        
+        <get name="id" value="124" />
     </php>
 </phpunit>

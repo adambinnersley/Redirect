@@ -3,6 +3,7 @@ namespace URIRequest;
 
 use PHPUnit\Framework\TestCase;
 use URIRequest\Redirect;
+use URIRequest\SafeURI;
 use DBAL\Database;
 
 class RedirectsTest extends TestCase{
@@ -59,6 +60,18 @@ class RedirectsTest extends TestCase{
     
     /**
      * @covers \URIRequest\Redirect::__construct
+     * @covers \URIRequest\Redirect::setRedirectFile
+     * @covers \URIRequest\Redirect::getRedirectFile
+     */
+    public function testRedirectFileLocation(){
+        $this->assertEquals(dirname(dirname(__FILE__)).'/redirects/redirects.php', $this->redirect->getRedirectFile());
+        $this->redirect->setRedirectFile(dirname(dirname(__FILE__)).'/redirects/someFile.php');
+        $this->assertNotEquals(dirname(dirname(__FILE__)).'/redirects/redirects.php', $this->redirect->getRedirectFile());
+        $this->assertEquals(dirname(dirname(__FILE__)).'/redirects/someFile.php', $this->redirect->getRedirectFile());
+    }
+    
+    /**
+     * @covers \URIRequest\Redirect::__construct
      * @covers \URIRequest\Redirect::addRedirect
      * @covers \URIRequest\Redirect::checkURI
      * @covers \URIRequest\SafeURI::makeURLSafe
@@ -110,12 +123,33 @@ class RedirectsTest extends TestCase{
     /**
      * @covers \URIRequest\Redirect::__construct
      * @covers \URIRequest\Redirect::checkURI
+     * @covers \URIRequest\Redirect::checkDBRedirects
+     * @covers \URIRequest\Redirect::checkFileRedirects
      * @covers \URIRequest\Redirect::logRequest
      * @covers \URIRequest\SafeURI::makeURLSafe
      */
     public function testCheckURIs() {
         $this->assertFalse($this->redirect->checkURI('/this-does-not-exist'));
         $this->assertEquals('https://www.google.co.uk', $this->redirect->checkURI('/google'));
+        $this->assertEquals('sample-to', $this->redirect->checkURI('sample-from'));
         $this->assertNotEmpty($this->redirect->checkURI('/hippos'));
+    }
+    
+    /**
+     * @covers \URIRequest\SafeURI::makeURLSafe
+     */
+    public function testCleanURI(){
+        $string = '/testing?734857-_bateo\'"$';
+        $this->assertEquals('/testing?734857-_bateo', SafeURI::makeURLSafe($string));
+    }
+    
+    /**
+     * @covers \URIRequest\SafeURI::removeVariables
+     */
+    public function testCleanPath(){
+        $string = '/page?var=test&hello=678345';
+        $this->assertNotContains('?', SafeURI::removeVariables($string, true));
+        $this->assertEquals('/page', SafeURI::removeVariables($string, true));
+        $this->assertNotContains('hello', SafeURI::removeVariables($string, false, array('hello')));
     }
 }

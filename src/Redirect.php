@@ -13,6 +13,12 @@ class Redirect {
     protected $db;
     
     /**
+     * This should be the location where the redirect file is located
+     * @var string 
+     */
+    protected $file_location;
+
+    /**
      * This needs to the the table name where the redirects are located
      * @var string 
      */
@@ -30,6 +36,7 @@ class Redirect {
      */
     public function __construct(Database $db) {
         $this->db = $db;
+        $this->setRedirectFile(dirname(dirname(__FILE__)).'/redirects/redirects.php');
     }
     
     /**
@@ -50,6 +57,29 @@ class Redirect {
      */
     public function getRedirectTable() {
         return $this->redirect_table;
+    }
+    
+    /**
+     * Set the location of a redirect file including which should include an array
+     * @param string $file_location This should be the file location
+     * @return $this
+     */
+    public function setRedirectFile($file_location){
+        if(!empty(trim($file_location)) && is_string($file_location)) {
+            $this->file_location = $file_location;
+        }
+        return $this;
+    }
+    
+    /**
+     * Returns the location of any redirect file if set
+     * @return string|boolean If a file location is set will return a string else will return false 
+     */
+    public function getRedirectFile(){
+        if(!empty($this->file_location)) {
+            return $this->file_location;
+        }
+        return false;
     }
     
     /**
@@ -83,7 +113,7 @@ class Redirect {
      */
     public function checkURI($uri, $log = true) {
         $check_db = $this->checkDBRedirects($uri);
-        $file_check = false;
+        $file_check = $this->checkFileRedirects($uri);
         
         if($check_db !== false) {return $check_db;}
         elseif($file_check !== false) {return $file_check;}
@@ -114,6 +144,19 @@ class Redirect {
     }
     
     /**
+     * Checks a PHP file array if the redirect exists which can also include variables
+     * @param string $url This should be the URI you are checking for any redirects
+     * @return string|boolean
+     */
+    protected function checkFileRedirects($url){
+        if(file_exists($this->getRedirectFile())){
+            include($this->getRedirectFile());
+            if(array_key_exists(SafeURI::makeURLSafe($url), $redirects)){return $redirects[SafeURI::makeURLSafe($url)];}
+        }
+        return false;
+    }
+    
+    /**
      * Add a new redirect to the database
      * @param string $uri This should be the URI that you wish to add a redirect for
      * @param string $redirect This should be the URI you want to redirect to
@@ -122,11 +165,7 @@ class Redirect {
      */
     public function addRedirect($uri, $redirect, $active = 1) {
         if($uri !== $redirect && !empty(SafeURI::makeURLSafe($uri)) && !empty(SafeURI::makeURLSafe($redirect))) {
-            $checkRedirect = $this->checkURI($redirect);
-            if($checkRedirect !== false && $this->checkURI($redirect) !== SafeURI::makeURLSafe($uri)){
-                $redirect = $checkRedirect;
-            }
-            if($this->db->insert($this->getRedirectTable(), array('uri' => SafeURI::makeURLSafe($uri), 'redirect' => SafeURI::makeURLSafe($redirect), 'active' => intval($active))) !== false) {
+            if($this->db->insert($this->getRedirectTable(), array('uri' => SafeURI::makeURLSafe($uri), 'redirect' => $this->checkRedirect($uri, $redirect), 'active' => intval($active))) !== false) {
                 $this->updateExistingRedirects($uri, $redirect);
                 return true;
             }
@@ -153,11 +192,8 @@ class Redirect {
      */
     public function updateRedirect($uri, $new_uri, $redirect, $active = 1) {
         if($new_uri !== $redirect && !empty(SafeURI::makeURLSafe($uri)) && !empty(SafeURI::makeURLSafe($new_uri)) && !empty(SafeURI::makeURLSafe($redirect))) {
-            $checkRedirect = $this->checkURI($redirect);
-            if($checkRedirect !== false && $this->checkURI($redirect) !== SafeURI::makeURLSafe($uri)){
-                $redirect = $checkRedirect;
-            }
-            if($this->db->update($this->getRedirectTable(), array('uri' => SafeURI::makeURLSafe($new_uri), 'redirect' => SafeURI::makeURLSafe($redirect), 'active' => intval($active)), array('uri' => SafeURI::makeURLSafe($uri)), 1) !== false) {
+            //$redirect = $this->checkRedirect($new_uri, $redirect)
+            if($this->db->update($this->getRedirectTable(), array('uri' => SafeURI::makeURLSafe($new_uri), 'redirect' => $redirect, 'active' => intval($active)), array('uri' => SafeURI::makeURLSafe($uri)), 1) !== false) {
                 $this->updateExistingRedirects($uri, $redirect);
                 return true;
             }
@@ -172,6 +208,20 @@ class Redirect {
      * @return booean If successfully updated will return true else will return false
      */
     public function updateExistingRedirects($uri, $new_uri) {
-        return $this->db->update($this->getRedirectTable(), array('redirect' => $new_uri), array('redirect' => $uri));
+        return $this->db->update($this->getRedirectTable(), array('redirect' => SafeURI::makeURLSafe($new_uri)), array('redirect' => SafeURI::makeURLSafe($uri)));
+    }
+    
+    /**
+     * Checks to make sure the redirect location isn't forwarding on to another location to reduce redirects
+     * @param string $uri This should be the original URI
+     * @param string $redirect This should be the redirect location
+     * @return string The end location will be returned
+     */
+    private function checkRedirect($uri, $redirect){
+        $checkRedirect = $this->checkURI($redirect);
+        if($checkRedirect !== false && $this->checkURI($redirect) !== SafeURI::makeURLSafe($uri)){
+            return $checkRedirect;
+        }
+        return $redirect;
     }
 }
