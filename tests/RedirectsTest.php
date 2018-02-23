@@ -73,6 +73,8 @@ class RedirectsTest extends TestCase{
     /**
      * @covers \URIRequest\Redirect::__construct
      * @covers \URIRequest\Redirect::addRedirect
+     * @covers \URIRequest\Redirect::checkRedirect
+     * @covers \URIRequest\Redirect::updateExistingRedirects
      * @covers \URIRequest\Redirect::checkURI
      * @covers \URIRequest\SafeURI::makeURLSafe
      */
@@ -88,6 +90,8 @@ class RedirectsTest extends TestCase{
     /**
      * @covers \URIRequest\Redirect::__construct
      * @covers \URIRequest\Redirect::updateRedirect
+     * @covers \URIRequest\Redirect::checkRedirect
+     * @covers \URIRequest\Redirect::updateExistingRedirects
      * @covers \URIRequest\Redirect::checkURI
      * @covers \URIRequest\Redirect::logRequest
      * @covers \URIRequest\SafeURI::makeURLSafe
