@@ -36,7 +36,6 @@ class Redirect {
      */
     public function __construct(Database $db) {
         $this->db = $db;
-        $this->setRedirectFile(dirname(dirname(__FILE__)).'/redirects/redirects.php');
     }
     
     /**

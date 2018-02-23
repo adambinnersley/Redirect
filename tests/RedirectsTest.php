@@ -64,9 +64,9 @@ class RedirectsTest extends TestCase{
      * @covers \URIRequest\Redirect::getRedirectFile
      */
     public function testRedirectFileLocation(){
-        $this->assertEquals(dirname(dirname(__FILE__)).'/redirects/redirects.php', $this->redirect->getRedirectFile());
+        $this->assertFalse($this->redirect->getRedirectFile());
         $this->redirect->setRedirectFile(dirname(dirname(__FILE__)).'/redirects/someFile.php');
-        $this->assertNotEquals(dirname(dirname(__FILE__)).'/redirects/redirects.php', $this->redirect->getRedirectFile());
+        $this->assertNotFalse($this->redirect->getRedirectFile());
         $this->assertEquals(dirname(dirname(__FILE__)).'/redirects/someFile.php', $this->redirect->getRedirectFile());
     }
     
@@ -131,6 +131,7 @@ class RedirectsTest extends TestCase{
     public function testCheckURIs() {
         $this->assertFalse($this->redirect->checkURI('/this-does-not-exist'));
         $this->assertEquals('https://www.google.co.uk', $this->redirect->checkURI('/google'));
+        $this->redirect->setRedirectFile(dirname(__FILE__).'/sample_data/redirects.php');
         $this->assertEquals('sample-to', $this->redirect->checkURI('sample-from'));
         $this->assertNotEmpty($this->redirect->checkURI('/hippos'));
     }
