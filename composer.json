@@ -1,6 +1,6 @@
 {
-    "name": "adamb/redirect404",
-    "description": "Redirect specify 404 requests to alternate urls",
+    "name": "adamb/redirect",
+    "description": "Redirect specific requests to alternate urls",
     "type": "library",
     "require": {
         "adamb/database": "^1.4",
