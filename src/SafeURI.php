@@ -11,7 +11,7 @@ class SafeURI {
      */
     public static function makeURLSafe($uri) {
         if(is_string($uri)){
-            return strtolower(filter_var(trim($uri), FILTER_SANITIZE_URL));
+            return preg_replace('~[^-a-z0-9_/?]+~', '', strtolower(filter_var(trim($uri), FILTER_SANITIZE_URL)));
         }
         return '';
     }
