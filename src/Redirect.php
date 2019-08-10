@@ -139,7 +139,7 @@ class Redirect {
      * @return string|false If the given URI exist then will return the string else will return false 
      */
     protected function checkDBRedirects($uri) {
-        return $this->db->fetchColumn($this->getRedirectTable(), array('uri' => SafeURI::makeURLSafe($uri), 'active' => 1), array('redirect'));
+        return $this->db->fetchColumn($this->getRedirectTable(), ['uri' => SafeURI::makeURLSafe($uri), 'active' => 1], ['redirect']);
     }
     
     /**
@@ -150,7 +150,9 @@ class Redirect {
     protected function checkFileRedirects($url){
         if(file_exists($this->getRedirectFile())){
             include($this->getRedirectFile());
-            if(array_key_exists(SafeURI::makeURLSafe($url), $redirects)){return $redirects[SafeURI::makeURLSafe($url)];}
+            if(array_key_exists(SafeURI::makeURLSafe($url), $redirects)){
+                return $redirects[SafeURI::makeURLSafe($url)];
+            }
         }
         return false;
     }
@@ -164,7 +166,7 @@ class Redirect {
      */
     public function addRedirect($uri, $redirect, $active = 1) {
         if($uri !== $redirect && !empty(SafeURI::makeURLSafe($uri)) && !empty(SafeURI::makeURLSafe($redirect))) {
-            if($this->db->insert($this->getRedirectTable(), array('uri' => SafeURI::makeURLSafe($uri), 'redirect' => $this->checkRedirect($uri, $redirect), 'active' => intval($active))) !== false) {
+            if($this->db->insert($this->getRedirectTable(), ['uri' => SafeURI::makeURLSafe($uri), 'redirect' => $this->checkRedirect($uri, $redirect), 'active' => intval($active)]) !== false) {
                 $this->updateExistingRedirects($uri, $redirect);
                 return true;
             }
@@ -178,7 +180,7 @@ class Redirect {
      * @return boolean If the redirect has successfully been deleted will return true else returns false
      */
     public function deleteRedirect($uri) {
-        return $this->db->delete($this->getRedirectTable(), array('uri' => SafeURI::makeURLSafe($uri)));
+        return $this->db->delete($this->getRedirectTable(), ['uri' => SafeURI::makeURLSafe($uri)]);
     }
     
     /**
@@ -192,7 +194,7 @@ class Redirect {
     public function updateRedirect($uri, $new_uri, $redirect, $active = 1) {
         if($new_uri !== $redirect && !empty(SafeURI::makeURLSafe($uri)) && !empty(SafeURI::makeURLSafe($new_uri)) && !empty(SafeURI::makeURLSafe($redirect))) {
             //$redirect = $this->checkRedirect($new_uri, $redirect)
-            if($this->db->update($this->getRedirectTable(), array('uri' => SafeURI::makeURLSafe($new_uri), 'redirect' => $redirect, 'active' => intval($active)), array('uri' => SafeURI::makeURLSafe($uri)), 1) !== false) {
+            if($this->db->update($this->getRedirectTable(), ['uri' => SafeURI::makeURLSafe($new_uri), 'redirect' => $redirect, 'active' => intval($active)], ['uri' => SafeURI::makeURLSafe($uri)], 1) !== false) {
                 $this->updateExistingRedirects($uri, $redirect);
                 return true;
             }
@@ -207,7 +209,7 @@ class Redirect {
      * @return booean If successfully updated will return true else will return false
      */
     public function updateExistingRedirects($uri, $new_uri) {
-        return $this->db->update($this->getRedirectTable(), array('redirect' => SafeURI::makeURLSafe($new_uri)), array('redirect' => SafeURI::makeURLSafe($uri)));
+        return $this->db->update($this->getRedirectTable(), ['redirect' => SafeURI::makeURLSafe($new_uri)], ['redirect' => SafeURI::makeURLSafe($uri)]);
     }
     
     /**

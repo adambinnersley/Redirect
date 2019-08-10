@@ -23,13 +23,13 @@ class SafeURI {
      * @param array $selected If you are only removing selected variables add them as an array item
      * @return string The string will be returned with the selected items removed
      */
-    public static function removeVariables($uri, $all = true, $selected = array()) {
+    public static function removeVariables($uri, $all = true, $selected = []) {
         if($all === true){
             return explode('?', $uri)[0];
         }
         else{
-            $remove = array();
-            $vars = array();
+            $remove = [];
+            $vars = [];
             parse_str($uri, $vars);
             foreach($selected as $item){
                 $remove[] = '?'.$item.'='.$vars[$item];
