@@ -13,7 +13,7 @@ class RedirectsTest extends TestCase{
     /**
      * @covers \URIRequest\Redirect::__construct
      */
-    public function setUp() {
+    public function setUp(): void {
         $this->db = new Database($GLOBALS['hostname'], $GLOBALS['username'], $GLOBALS['password'], $GLOBALS['database']);
         if(!$this->db->isConnected()) {
             $this->markTestSkipped(
@@ -25,7 +25,7 @@ class RedirectsTest extends TestCase{
         $this->redirect = new Redirect($this->db);
     }
     
-    public function tearDown() {
+    public function tearDown(): void {
         $this->db = null;
         $this->redirect = null;
     }
