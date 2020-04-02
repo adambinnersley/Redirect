@@ -166,6 +166,7 @@ class Redirect {
      */
     public function addRedirect($uri, $redirect, $active = 1) {
         if($uri !== $redirect && !empty(SafeURI::makeURLSafe($uri)) && !empty(SafeURI::makeURLSafe($redirect))) {
+            $this->deleteRedirect($redirect);
             if($this->db->insert($this->getRedirectTable(), ['uri' => SafeURI::makeURLSafe($uri), 'redirect' => $this->checkRedirect($uri, $redirect), 'active' => intval($active)]) !== false) {
                 $this->updateExistingRedirects($uri, $redirect);
                 return true;
