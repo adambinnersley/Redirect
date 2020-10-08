@@ -2,15 +2,17 @@
 
 namespace URIRequest;
 
-class SafeURI {
+class SafeURI
+{
     
     /**
      * Remove any unsafe characters from the URI string
      * @param string $uri The original URI string
      * @return string The safe URI string should be returned
      */
-    public static function makeURLSafe($uri) {
-        if(is_string($uri)){
+    public static function makeURLSafe($uri)
+    {
+        if (is_string($uri)) {
             return preg_replace('~[^-a-z0-9_./?=&,;:$@#+]+~', '', strtolower(filter_var(trim($uri), FILTER_SANITIZE_URL)));
         }
         return '';
@@ -23,20 +25,19 @@ class SafeURI {
      * @param array $selected If you are only removing selected variables add them as an array item
      * @return string The string will be returned with the selected items removed
      */
-    public static function removeVariables($uri, $all = true, $selected = []) {
-        if($all === true){
+    public static function removeVariables($uri, $all = true, $selected = [])
+    {
+        if ($all === true) {
             return explode('?', $uri)[0];
-        }
-        else{
+        } else {
             $remove = [];
             $vars = [];
             parse_str($uri, $vars);
-            foreach($selected as $item){
+            foreach ($selected as $item) {
                 $remove[] = '?'.$item.'='.$vars[$item];
                 $remove[] = '&'.$item.'='.$vars[$item];
             }
             return str_replace($remove, '', $uri);
         }
-        
     }
 }
