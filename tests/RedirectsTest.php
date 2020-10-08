@@ -6,16 +6,18 @@ use URIRequest\Redirect;
 use URIRequest\SafeURI;
 use DBAL\Database;
 
-class RedirectsTest extends TestCase{
+class RedirectsTest extends TestCase
+{
     protected $db;
     protected $redirect;
     
     /**
      * @covers \URIRequest\Redirect::__construct
      */
-    public function setUp(): void {
+    public function setUp(): void
+    {
         $this->db = new Database($GLOBALS['hostname'], $GLOBALS['username'], $GLOBALS['password'], $GLOBALS['database']);
-        if(!$this->db->isConnected()) {
+        if (!$this->db->isConnected()) {
             $this->markTestSkipped(
                 'No local database connection is available'
             );
@@ -25,7 +27,8 @@ class RedirectsTest extends TestCase{
         $this->redirect = new Redirect($this->db);
     }
     
-    public function tearDown(): void {
+    public function tearDown(): void
+    {
         $this->db = null;
         $this->redirect = null;
     }
@@ -35,7 +38,8 @@ class RedirectsTest extends TestCase{
      * @covers \URIRequest\Redirect::setRedirectTable
      * @covers \URIRequest\Redirect::getRedirectTable
      */
-    public function testChangeTableName() {
+    public function testChangeTableName()
+    {
         $this->assertEquals('redirects', $this->redirect->getRedirectTable());
         $this->assertObjectHasAttribute('log_location', $this->redirect->setRedirectTable(false));
         $this->assertEquals('redirects', $this->redirect->getRedirectTable());
@@ -52,7 +56,8 @@ class RedirectsTest extends TestCase{
      * @covers \URIRequest\Redirect::setLogLocation
      * @covers \URIRequest\Redirect::getLogLocation
      */
-    public function testChangeLogLocation() {
+    public function testChangeLogLocation()
+    {
         $this->assertFalse($this->redirect->getLogLocation());
         $this->assertObjectHasAttribute('log_location', $this->redirect->setLogLocation(dirname(dirname(__FILE__)).'/logs/redirect_request_errors.txt'));
         $this->assertNotFalse($this->redirect->getLogLocation());
@@ -63,7 +68,8 @@ class RedirectsTest extends TestCase{
      * @covers \URIRequest\Redirect::setRedirectFile
      * @covers \URIRequest\Redirect::getRedirectFile
      */
-    public function testRedirectFileLocation(){
+    public function testRedirectFileLocation()
+    {
         $this->assertFalse($this->redirect->getRedirectFile());
         $this->redirect->setRedirectFile(dirname(dirname(__FILE__)).'/redirects/someFile.php');
         $this->assertNotFalse($this->redirect->getRedirectFile());
@@ -78,7 +84,8 @@ class RedirectsTest extends TestCase{
      * @covers \URIRequest\Redirect::checkURI
      * @covers \URIRequest\SafeURI::makeURLSafe
      */
-    public function testAddRedirect() {
+    public function testAddRedirect()
+    {
         // Test successfully adding
         $this->assertTrue($this->redirect->addRedirect('/my-new-redirect', '/my/new/redirect'));
         // Test adding a value that should already exist
@@ -96,7 +103,8 @@ class RedirectsTest extends TestCase{
      * @covers \URIRequest\Redirect::logRequest
      * @covers \URIRequest\SafeURI::makeURLSafe
      */
-    public function testUpdateRedirect() {
+    public function testUpdateRedirect()
+    {
         // Test successfully updating
         $this->assertTrue($this->redirect->updateRedirect('/hello-world', '/hello-world', '/new-location'));
         // Test updaing none existant URI
@@ -115,7 +123,8 @@ class RedirectsTest extends TestCase{
      * @covers \URIRequest\Redirect::logRequest
      * @covers \URIRequest\SafeURI::makeURLSafe
      */
-    public function testDeleteRedirect() {
+    public function testDeleteRedirect()
+    {
         // Test successfull delete
         $this->assertTrue($this->redirect->deleteRedirect('/hello-world'));
         // Test deleting value that shouldn't exist or has already been deleted
@@ -132,7 +141,8 @@ class RedirectsTest extends TestCase{
      * @covers \URIRequest\Redirect::logRequest
      * @covers \URIRequest\SafeURI::makeURLSafe
      */
-    public function testCheckURIs() {
+    public function testCheckURIs()
+    {
         $this->assertFalse($this->redirect->checkURI('/this-does-not-exist'));
         $this->assertEquals('https://www.google.co.uk', $this->redirect->checkURI('/google'));
         $this->redirect->setRedirectFile(dirname(__FILE__).'/sample_data/redirects.php');
@@ -143,7 +153,8 @@ class RedirectsTest extends TestCase{
     /**
      * @covers \URIRequest\SafeURI::makeURLSafe
      */
-    public function testCleanURI(){
+    public function testCleanURI()
+    {
         $string = '/testing?734857-_bateo\'"$';
         $this->assertEquals('/testing?734857-_bateo', SafeURI::makeURLSafe($string));
     }
@@ -151,7 +162,8 @@ class RedirectsTest extends TestCase{
     /**
      * @covers \URIRequest\SafeURI::removeVariables
      */
-    public function testCleanPath(){
+    public function testCleanPath()
+    {
         $string = '/page?var=test&hello=678345';
         $this->assertNotContains('?', SafeURI::removeVariables($string, true));
         $this->assertEquals('/page', SafeURI::removeVariables($string, true));
