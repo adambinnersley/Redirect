@@ -156,7 +156,7 @@ class RedirectsTest extends TestCase
     public function testCleanURI()
     {
         $string = '/testing?734857-_bateo\'"$';
-        $this->assertEquals('/testing?734857-_bateo', SafeURI::makeURLSafe($string));
+        $this->assertEquals('/testing?734857-_bateo$', SafeURI::makeURLSafe($string));
     }
     
     /**
@@ -165,8 +165,8 @@ class RedirectsTest extends TestCase
     public function testCleanPath()
     {
         $string = '/page?var=test&hello=678345';
-        $this->assertNotContains('?', SafeURI::removeVariables($string, true));
+        $this->assertStringNotContainsString('?', SafeURI::removeVariables($string, true));
         $this->assertEquals('/page', SafeURI::removeVariables($string, true));
-        $this->assertNotContains('hello', SafeURI::removeVariables($string, false, array('hello')));
+        $this->assertStringNotContainsString('hello', SafeURI::removeVariables($string, false, array('hello')));
     }
 }

@@ -77,7 +77,7 @@ class Redirect
     
     /**
      * Returns the location of any redirect file if set
-     * @return string|boolean If a file location is set will return a string else will return false
+     * @return string|false If a file location is set will return a string else will return false
      */
     public function getRedirectFile()
     {
@@ -102,7 +102,7 @@ class Redirect
     
     /**
      * If the log location is set will return the log location
-     * @return string|boolean If the log location is set will return the location string else returns false
+     * @return string|false If the log location is set will return the location string else returns false
      */
     public function getLogLocation()
     {
@@ -183,7 +183,7 @@ class Redirect
      */
     public function addRedirect($uri, $redirect, $active = 1)
     {
-        if ($uri !== $redirect && !empty(SafeURI::makeURLSafe($uri)) && !empty(SafeURI::makeURLSafe($redirect))) {
+        if ($uri !== $redirect && !empty(SafeURI::makeURLSafe($uri)) && !empty(SafeURI::makeURLSafe($redirect)) && !$this->checkDBRedirects($uri)) {
             $this->deleteRedirect($redirect);
             if ($this->db->insert($this->getRedirectTable(), ['uri' => SafeURI::makeURLSafe($uri), 'redirect' => $this->checkRedirect($uri, $redirect), 'active' => intval($active)]) !== false) {
                 $this->updateExistingRedirects($uri, $redirect);
