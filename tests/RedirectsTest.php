@@ -12,7 +12,7 @@ class RedirectsTest extends TestCase
     protected $redirect;
     
     /**
-     * @covers \URIRequest\Redirect::__construct
+     * @covers URIRequest\Redirect::__construct
      */
     public function setUp(): void
     {
@@ -23,6 +23,7 @@ class RedirectsTest extends TestCase
             );
         }
         $this->db->query(file_get_contents(dirname(dirname(__FILE__)).'/database/database_mysql.sql'));
+        $this->db->truncate('redirects');
         $this->db->query(file_get_contents(dirname(__FILE__).'/sample_data/data.sql'));
         $this->redirect = new Redirect($this->db);
     }
@@ -34,9 +35,9 @@ class RedirectsTest extends TestCase
     }
     
     /**
-     * @covers \URIRequest\Redirect::__construct
-     * @covers \URIRequest\Redirect::setRedirectTable
-     * @covers \URIRequest\Redirect::getRedirectTable
+     * @covers URIRequest\Redirect::__construct
+     * @covers URIRequest\Redirect::setRedirectTable
+     * @covers URIRequest\Redirect::getRedirectTable
      */
     public function testChangeTableName()
     {
@@ -52,21 +53,24 @@ class RedirectsTest extends TestCase
     }
     
     /**
-     * @covers \URIRequest\Redirect::__construct
-     * @covers \URIRequest\Redirect::setLogLocation
-     * @covers \URIRequest\Redirect::getLogLocation
+     * @covers URIRequest\Redirect::__construct
+     * @covers URIRequest\Redirect::setLogLocation
+     * @covers URIRequest\Redirect::getLogLocation
+     * @covers URIRequest\Redirect::checkURI
+     * @covers URIRequest\Redirect::logRequest
      */
-    public function testChangeLogLocation()
+    public function testLogLocation()
     {
         $this->assertFalse($this->redirect->getLogLocation());
         $this->assertObjectHasAttribute('log_location', $this->redirect->setLogLocation(dirname(dirname(__FILE__)).'/logs/redirect_request_errors.txt'));
         $this->assertNotFalse($this->redirect->getLogLocation());
+        $this->assertFalse($this->redirect->checkURI('\this-should-be-logged', true));
     }
     
     /**
-     * @covers \URIRequest\Redirect::__construct
-     * @covers \URIRequest\Redirect::setRedirectFile
-     * @covers \URIRequest\Redirect::getRedirectFile
+     * @covers URIRequest\Redirect::__construct
+     * @covers URIRequest\Redirect::setRedirectFile
+     * @covers URIRequest\Redirect::getRedirectFile
      */
     public function testRedirectFileLocation()
     {
@@ -77,12 +81,12 @@ class RedirectsTest extends TestCase
     }
     
     /**
-     * @covers \URIRequest\Redirect::__construct
-     * @covers \URIRequest\Redirect::addRedirect
-     * @covers \URIRequest\Redirect::checkRedirect
-     * @covers \URIRequest\Redirect::updateExistingRedirects
-     * @covers \URIRequest\Redirect::checkURI
-     * @covers \URIRequest\SafeURI::makeURLSafe
+     * @covers URIRequest\Redirect::__construct
+     * @covers URIRequest\Redirect::addRedirect
+     * @covers URIRequest\Redirect::checkRedirect
+     * @covers URIRequest\Redirect::updateExistingRedirects
+     * @covers URIRequest\Redirect::checkURI
+     * @covers URIRequest\SafeURI::makeURLSafe
      */
     public function testAddRedirect()
     {
@@ -92,16 +96,18 @@ class RedirectsTest extends TestCase
         $this->assertFalse($this->redirect->addRedirect('/my-new-redirect', '/my/new/redirect'));
         // Test adding a value that is not a string
         $this->assertFalse($this->redirect->addRedirect('/test-fail', false));
+        // Should test for subsequent redirect
+        $this->assertTrue($this->redirect->addRedirect('/some-old-link', '/my-new-redirect'));
     }
     
     /**
-     * @covers \URIRequest\Redirect::__construct
-     * @covers \URIRequest\Redirect::updateRedirect
-     * @covers \URIRequest\Redirect::checkRedirect
-     * @covers \URIRequest\Redirect::updateExistingRedirects
-     * @covers \URIRequest\Redirect::checkURI
-     * @covers \URIRequest\Redirect::logRequest
-     * @covers \URIRequest\SafeURI::makeURLSafe
+     * @covers URIRequest\Redirect::__construct
+     * @covers URIRequest\Redirect::updateRedirect
+     * @covers URIRequest\Redirect::checkRedirect
+     * @covers URIRequest\Redirect::updateExistingRedirects
+     * @covers URIRequest\Redirect::checkURI
+     * @covers URIRequest\Redirect::logRequest
+     * @covers URIRequest\SafeURI::makeURLSafe
      */
     public function testUpdateRedirect()
     {
@@ -116,12 +122,12 @@ class RedirectsTest extends TestCase
     }
     
     /**
-     * @covers \URIRequest\Redirect::__construct
-     * @covers \URIRequest\Redirect::addRedirect
-     * @covers \URIRequest\Redirect::deleteRedirect
-     * @covers \URIRequest\Redirect::checkURI
-     * @covers \URIRequest\Redirect::logRequest
-     * @covers \URIRequest\SafeURI::makeURLSafe
+     * @covers URIRequest\Redirect::__construct
+     * @covers URIRequest\Redirect::addRedirect
+     * @covers URIRequest\Redirect::deleteRedirect
+     * @covers URIRequest\Redirect::checkURI
+     * @covers URIRequest\Redirect::logRequest
+     * @covers URIRequest\SafeURI::makeURLSafe
      */
     public function testDeleteRedirect()
     {
@@ -134,12 +140,12 @@ class RedirectsTest extends TestCase
     }
     
     /**
-     * @covers \URIRequest\Redirect::__construct
-     * @covers \URIRequest\Redirect::checkURI
-     * @covers \URIRequest\Redirect::checkDBRedirects
-     * @covers \URIRequest\Redirect::checkFileRedirects
-     * @covers \URIRequest\Redirect::logRequest
-     * @covers \URIRequest\SafeURI::makeURLSafe
+     * @covers URIRequest\Redirect::__construct
+     * @covers URIRequest\Redirect::checkURI
+     * @covers URIRequest\Redirect::checkDBRedirects
+     * @covers URIRequest\Redirect::checkFileRedirects
+     * @covers URIRequest\Redirect::logRequest
+     * @covers URIRequest\SafeURI::makeURLSafe
      */
     public function testCheckURIs()
     {
@@ -151,7 +157,7 @@ class RedirectsTest extends TestCase
     }
     
     /**
-     * @covers \URIRequest\SafeURI::makeURLSafe
+     * @covers URIRequest\SafeURI::makeURLSafe
      */
     public function testCleanURI()
     {
@@ -160,7 +166,7 @@ class RedirectsTest extends TestCase
     }
     
     /**
-     * @covers \URIRequest\SafeURI::removeVariables
+     * @covers URIRequest\SafeURI::removeVariables
      */
     public function testCleanPath()
     {
