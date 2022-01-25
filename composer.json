@@ -3,8 +3,8 @@
     "description": "Redirect specific requests to alternate urls",
     "type": "library",
     "require": {
-        "adamb/database": "^1.5",
-        "monolog/monolog": "^1.23"
+        "adamb/database": "*",
+        "monolog/monolog": "*"
     },
     "require-dev": {
         "phpunit/phpunit": "*"
