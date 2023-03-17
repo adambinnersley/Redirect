@@ -2,6 +2,7 @@
 namespace URIRequest;
 
 use DBAL\Database;
+use Monolog\Level;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 
@@ -143,8 +144,8 @@ class Redirect
     {
         if ($this->getLogLocation() !== false) {
             $log = new Logger('requests');
-            $log->pushHandler(new StreamHandler($this->getLogLocation(), Logger::DEBUG));
-            $log->addDebug($uri);
+            $log->pushHandler(new StreamHandler($this->getLogLocation(), Level::DEBUG));
+            $log->info($uri);
         }
     }
 
