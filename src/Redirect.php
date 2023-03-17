@@ -144,7 +144,7 @@ class Redirect
     {
         if ($this->getLogLocation() !== false) {
             $log = new Logger('requests');
-            $log->pushHandler(new StreamHandler($this->getLogLocation(), Level::DEBUG));
+            $log->pushHandler(new StreamHandler($this->getLogLocation(), Level::Debug));
             $log->info($uri);
         }
     }
