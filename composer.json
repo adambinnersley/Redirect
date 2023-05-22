@@ -4,7 +4,7 @@
     "type": "library",
     "require": {
         "adamb/database": "*",
-        "monolog/monolog": "^3.0"
+        "monolog/monolog": "*"
     },
     "require-dev": {
         "phpunit/phpunit": "*"
